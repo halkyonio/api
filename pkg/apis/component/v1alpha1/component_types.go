@@ -23,7 +23,7 @@ type ComponentSpec struct {
 	// Cpu is the memory to be assigned to the pod running the application
 	Memory string `json:"memory,omitempty"`
 	// Port is the HTTP/TCP port number used within the pod by the runtime
-	Ports []int32 `json:"ports,omitempty"`
+	Port int32 `json:"ports,omitempty"`
 	// The storage allows to specify the capacity and mode of the volume to be mounted for the pod
 	Storage Storage `json:"storage,omitempty"`
 	// Array of env variables containing extra/additional info to be used to configure the runtime
