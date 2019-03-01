@@ -87,6 +87,7 @@ var phases = []string{
 	"CreatingService",
 	"Building",
 	"Deploying",
+	"Deployed",
 	"Linking",
 	"Error",
 }
@@ -96,6 +97,7 @@ const (
 	ServiceCreation
 	Building
 	Deploying
+	Deployed
 	Linking
 	Error
 )
