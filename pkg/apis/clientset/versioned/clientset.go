@@ -19,7 +19,6 @@ limitations under the License.
 package versioned
 
 import (
-	devexpv1alpha1 "github.com/snowdrop/component-api/pkg/apis/clientset/versioned/typed/component/v1alpha1"
 	devexpv1alpha2 "github.com/snowdrop/component-api/pkg/apis/clientset/versioned/typed/component/v1alpha2"
 	discovery "k8s.io/client-go/discovery"
 	rest "k8s.io/client-go/rest"
@@ -29,7 +28,6 @@ import (
 type Interface interface {
 	Discovery() discovery.DiscoveryInterface
 	DevexpV1alpha2() devexpv1alpha2.DevexpV1alpha2Interface
-	DevexpV1alpha1() devexpv1alpha1.DevexpV1alpha1Interface
 }
 
 // Clientset contains the clients for groups. Each group has exactly one
@@ -37,17 +35,11 @@ type Interface interface {
 type Clientset struct {
 	*discovery.DiscoveryClient
 	devexpV1alpha2 *devexpv1alpha2.DevexpV1alpha2Client
-	devexpV1alpha1 *devexpv1alpha1.DevexpV1alpha1Client
 }
 
 // DevexpV1alpha2 retrieves the DevexpV1alpha2Client
 func (c *Clientset) DevexpV1alpha2() devexpv1alpha2.DevexpV1alpha2Interface {
 	return c.devexpV1alpha2
-}
-
-// DevexpV1alpha1 retrieves the DevexpV1alpha1Client
-func (c *Clientset) DevexpV1alpha1() devexpv1alpha1.DevexpV1alpha1Interface {
-	return c.devexpV1alpha1
 }
 
 // Discovery retrieves the DiscoveryClient
@@ -70,10 +62,6 @@ func NewForConfig(c *rest.Config) (*Clientset, error) {
 	if err != nil {
 		return nil, err
 	}
-	cs.devexpV1alpha1, err = devexpv1alpha1.NewForConfig(&configShallowCopy)
-	if err != nil {
-		return nil, err
-	}
 
 	cs.DiscoveryClient, err = discovery.NewDiscoveryClientForConfig(&configShallowCopy)
 	if err != nil {
@@ -87,7 +75,6 @@ func NewForConfig(c *rest.Config) (*Clientset, error) {
 func NewForConfigOrDie(c *rest.Config) *Clientset {
 	var cs Clientset
 	cs.devexpV1alpha2 = devexpv1alpha2.NewForConfigOrDie(c)
-	cs.devexpV1alpha1 = devexpv1alpha1.NewForConfigOrDie(c)
 
 	cs.DiscoveryClient = discovery.NewDiscoveryClientForConfigOrDie(c)
 	return &cs
@@ -97,7 +84,6 @@ func NewForConfigOrDie(c *rest.Config) *Clientset {
 func New(c rest.Interface) *Clientset {
 	var cs Clientset
 	cs.devexpV1alpha2 = devexpv1alpha2.New(c)
-	cs.devexpV1alpha1 = devexpv1alpha1.New(c)
 
 	cs.DiscoveryClient = discovery.NewDiscoveryClient(c)
 	return &cs

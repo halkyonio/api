@@ -19,7 +19,6 @@ limitations under the License.
 package fake
 
 import (
-	devexpv1alpha1 "github.com/snowdrop/component-api/pkg/apis/component/v1alpha1"
 	devexpv1alpha2 "github.com/snowdrop/component-api/pkg/apis/component/v1alpha2"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	runtime "k8s.io/apimachinery/pkg/runtime"
@@ -33,7 +32,6 @@ var codecs = serializer.NewCodecFactory(scheme)
 var parameterCodec = runtime.NewParameterCodec(scheme)
 var localSchemeBuilder = runtime.SchemeBuilder{
 	devexpv1alpha2.AddToScheme,
-	devexpv1alpha1.AddToScheme,
 }
 
 // AddToScheme adds all types of this clientset into the given scheme. This allows composition

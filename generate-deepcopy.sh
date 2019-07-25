@@ -41,7 +41,7 @@ git clone https://github.com/kubernetes/code-generator.git "${TMP_DIR}"
 "${TMP_DIR}"/generate-groups.sh deepcopy,client \
   github.com/snowdrop/component-api/pkg/apis \
   github.com/snowdrop/component-api/pkg/apis \
-  "${KIND}:${API_VERSION},v1alpha1" \
+  "${KIND}:${API_VERSION}" \
   --go-header-file "${TMP_DIR}"/hack/boilerplate.go.txt
 
 # NOT NEEDED IF WE INSTALL THE PROJECT UNDER GOPATH AND THAT WE SET GO111MODULE=on
