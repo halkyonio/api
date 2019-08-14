@@ -1,2 +1,2 @@
-# component-api
-Public API types for the component CRD / operator
+# Halkyon API
+Public API types for the Halkyon CRD / operator
