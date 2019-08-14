@@ -1,7 +1,7 @@
 package v1beta1
 
 import (
-	common "halkyon.io/api/common/v1beta1"
+	common "halkyon.io/api/v1beta1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
