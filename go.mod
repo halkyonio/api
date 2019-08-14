@@ -1,4 +1,4 @@
-module github.com/snowdrop/component-api
+module halkyon.io/api
 
 go 1.12
 
