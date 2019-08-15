@@ -5,6 +5,8 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
+const Kind string = "Component"
+
 type DeploymentMode string
 
 func (dm DeploymentMode) String() string {
