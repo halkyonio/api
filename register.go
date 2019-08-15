@@ -1,4 +1,4 @@
-package v1beta1
+package api
 
 import (
 	capability "halkyon.io/api/capability/v1beta1"
