@@ -7,14 +7,14 @@ import (
 
 const Kind string = "Link"
 
-type LinkKind string
+type LinkType string
 
 const (
-	SecretLinkKind LinkKind = "Secret"
-	EnvLinkKind    LinkKind = "Env"
+	SecretLinkType LinkType = "Secret"
+	EnvLinkType    LinkType = "Env"
 )
 
-func (l LinkKind) String() string {
+func (l LinkType) String() string {
 	return string(l)
 }
 
@@ -25,7 +25,7 @@ type LinkSpec struct {
 	// Important: Run "operator-sdk generate k8s" to regenerate code after modifying this file
 	// Add custom validation using kubebuilder tags: https://book.kubebuilder.io/beyond_basics/generating_crd.html
 	ComponentName string   `json:"componentName"`
-	Kind          LinkKind `json:"kind,omitempty"`
+	Type          LinkType `json:"type,omitempty"`
 	Ref           string   `json:"ref,omitempty"`
 	// Array of env variables containing extra/additional info to be used to configure the runtime
 	Envs []v1beta1.Env `json:"envs,omitempty"`
