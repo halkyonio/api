@@ -35,8 +35,10 @@ git clone https://github.com/kubernetes/code-generator.git "${TMP_DIR}"
 #   generate-groups.sh all             github.com/example/project/pkg/client github.com/example/project/pkg/apis "foo:v1 bar:v1alpha1,v1beta1"
 #   generate-groups.sh deepcopy,client github.com/example/project/pkg/client github.com/example/project/pkg/apis "foo:v1 bar:v1alpha1,v1beta1"
 
-"${TMP_DIR}"/generate-groups.sh deepcopy,client \
-  halkyon.io/api \
-  halkyon.io/api \
-  "capability:v1beta1 component:v1beta1 link:v1beta1" \
-  --go-header-file "${TMP_DIR}"/hack/boilerplate.go.txt
+for group in capability component link; do
+  "${TMP_DIR}"/generate-groups.sh "deepcopy,client" \
+    halkyon.io/api/${group} \
+    halkyon.io/api \
+    "${group}:v1beta1" \
+    --go-header-file "${TMP_DIR}"/hack/boilerplate.go.txt
+done
