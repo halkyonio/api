@@ -28,6 +28,8 @@ import (
 type Interface interface {
 	Discovery() discovery.DiscoveryInterface
 	HalkyonV1beta1() halkyonv1beta1.HalkyonV1beta1Interface
+	// Deprecated: please explicitly pick a version if possible.
+	Halkyon() halkyonv1beta1.HalkyonV1beta1Interface
 }
 
 // Clientset contains the clients for groups. Each group has exactly one
@@ -39,6 +41,12 @@ type Clientset struct {
 
 // HalkyonV1beta1 retrieves the HalkyonV1beta1Client
 func (c *Clientset) HalkyonV1beta1() halkyonv1beta1.HalkyonV1beta1Interface {
+	return c.halkyonV1beta1
+}
+
+// Deprecated: Halkyon retrieves the default version of HalkyonClient.
+// Please explicitly pick a version.
+func (c *Clientset) Halkyon() halkyonv1beta1.HalkyonV1beta1Interface {
 	return c.halkyonV1beta1
 }
 

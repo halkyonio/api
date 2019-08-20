@@ -75,3 +75,8 @@ var _ clientset.Interface = &Clientset{}
 func (c *Clientset) HalkyonV1beta1() halkyonv1beta1.HalkyonV1beta1Interface {
 	return &fakehalkyonv1beta1.FakeHalkyonV1beta1{Fake: &c.Fake}
 }
+
+// Halkyon retrieves the HalkyonV1beta1Client
+func (c *Clientset) Halkyon() halkyonv1beta1.HalkyonV1beta1Interface {
+	return &fakehalkyonv1beta1.FakeHalkyonV1beta1{Fake: &c.Fake}
+}
