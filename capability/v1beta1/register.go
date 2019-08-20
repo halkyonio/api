@@ -23,3 +23,7 @@ func addKnownTypes(scheme *runtime.Scheme) error {
 	v1.AddToGroupVersion(scheme, SchemeGroupVersion)
 	return nil
 }
+
+func init() {
+	api.AddToSchemes = append(api.AddToSchemes, addKnownTypes)
+}
