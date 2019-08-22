@@ -16,7 +16,7 @@ type CapabilitySpec struct {
 
 	/*
 		      category: <database>, <logging>,<metrics>
-			  kind: postgres (if category is database)
+			  type: postgres (if category is database)
 			  version: <version of the DB or prometheus or ...> to be installed
 			  secretName: <secret_name_to_be_created> // Is used by kubedb postgres and is optional as some capability provider does not need to create a secret
 			  parameters:
@@ -27,17 +27,17 @@ type CapabilitySpec struct {
 			       value: "admin"
 	*/
 	Category   CapabilityCategory  `json:"category"`
-	Kind       CapabilityKind      `json:"kind"`
+	Type       CapabilityType      `json:"type"`
 	Version    string              `json:"version"`
 	Parameters []v1beta1.Parameter `json:"parameters,omitempty"`
 }
 
 type CapabilityCategory string
-type CapabilityKind string
+type CapabilityType string
 
 const (
 	DatabaseCategory CapabilityCategory = "Database"
-	PostgresKind     CapabilityKind     = "Postgres"
+	PostgresType     CapabilityType     = "Postgres"
 
 	MetricCategory  CapabilityCategory = "Metric"
 	LoggingCategory CapabilityCategory = "Logging"
