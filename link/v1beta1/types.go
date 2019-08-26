@@ -68,72 +68,8 @@ type Link struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
 
-	Spec    LinkSpec   `json:"spec,omitempty"`
-	Status  LinkStatus `json:"status,omitempty"`
-	requeue bool
-	changed bool
-}
-
-func (in *Link) HasChanged() bool {
-	return in.changed
-}
-
-func (in *Link) SetHasChanged(changed bool) {
-	in.changed = in.changed || changed
-}
-
-func (in *Link) SetNeedsRequeue(requeue bool) {
-	in.requeue = in.requeue || requeue
-}
-
-func (in *Link) NeedsRequeue() bool {
-	return in.requeue
-}
-
-func (in *Link) SetInitialStatus(msg string) bool {
-	if LinkPending != in.Status.Phase || msg != in.Status.Message {
-		in.Status.Phase = LinkPending
-		in.Status.Message = msg
-		in.SetHasChanged(true)
-		in.SetNeedsRequeue(true)
-		return true
-	}
-	return false
-}
-
-func (in *Link) IsValid() bool {
-	return true // todo: implement me
-}
-
-func (in *Link) SetErrorStatus(err error) bool {
-	errMsg := err.Error()
-	if LinkFailed != in.Status.Phase || errMsg != in.Status.Message {
-		in.Status.Phase = LinkFailed
-		in.Status.Message = errMsg
-		in.SetHasChanged(true)
-		in.SetNeedsRequeue(true)
-		return true
-	}
-	return false
-}
-
-func (in *Link) SetSuccessStatus(dependentName, msg string) bool {
-	if LinkReady != in.Status.Phase || msg != in.Status.Message {
-		in.Status.Phase = LinkReady
-		in.Status.Message = msg
-		in.SetHasChanged(true)
-		in.requeue = true
-		return true
-	}
-	return false
-}
-
-func (in *Link) GetStatusAsString() string {
-	return in.Status.Phase.String()
-}
-
-func (in *Link) ShouldDelete() bool {
-	return !in.DeletionTimestamp.IsZero()
+	Spec   LinkSpec   `json:"spec,omitempty"`
+	Status LinkStatus `json:"status,omitempty"`
 }
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object

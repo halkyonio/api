@@ -116,84 +116,8 @@ type Component struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
 
-	Spec    ComponentSpec   `json:"spec,omitempty"`
-	Status  ComponentStatus `json:"status,omitempty"`
-	requeue bool
-	changed bool
-}
-
-func (in *Component) HasChanged() bool {
-	return in.changed
-}
-
-func (in *Component) SetHasChanged(changed bool) {
-	in.changed = in.changed || changed
-}
-
-func (in *Component) SetNeedsRequeue(requeue bool) {
-	in.requeue = in.requeue || requeue
-}
-
-func (in *Component) NeedsRequeue() bool {
-	return in.requeue
-}
-
-func (in *Component) isPending() bool {
-	status := ComponentPending
-	if BuildDeploymentMode == in.Spec.DeploymentMode {
-		status = ComponentBuilding
-	}
-	return status == in.Status.Phase
-}
-
-func (in *Component) SetInitialStatus(msg string) bool {
-	if !in.isPending() || in.Status.Message != msg {
-		in.Status.Phase = ComponentPending
-		if BuildDeploymentMode == in.Spec.DeploymentMode {
-			in.Status.Phase = ComponentBuilding
-		}
-		in.Status.Message = msg
-		in.SetHasChanged(true)
-		in.SetNeedsRequeue(true)
-		return true
-	}
-	return false
-}
-
-func (in *Component) IsValid() bool {
-	return true // todo: implement me
-}
-
-func (in *Component) SetErrorStatus(err error) bool {
-	errMsg := err.Error()
-	if ComponentFailed != in.Status.Phase || errMsg != in.Status.Message {
-		in.Status.Phase = ComponentFailed
-		in.Status.Message = errMsg
-		in.SetHasChanged(true)
-		in.SetNeedsRequeue(true)
-		return true
-	}
-	return false
-}
-
-func (in *Component) SetSuccessStatus(dependentName, msg string) bool {
-	if dependentName != in.Status.PodName || ComponentReady != in.Status.Phase || msg != in.Status.Message {
-		in.Status.Phase = ComponentReady
-		in.Status.PodName = dependentName
-		in.Status.Message = msg
-		in.SetHasChanged(true)
-		in.requeue = false
-		return true
-	}
-	return false
-}
-
-func (in *Component) GetStatusAsString() string {
-	return in.Status.Phase.String()
-}
-
-func (in *Component) ShouldDelete() bool {
-	return !in.DeletionTimestamp.IsZero()
+	Spec   ComponentSpec   `json:"spec,omitempty"`
+	Status ComponentStatus `json:"status,omitempty"`
 }
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object

@@ -81,73 +81,8 @@ type Capability struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
 
-	Spec    CapabilitySpec   `json:"spec,omitempty"`
-	Status  CapabilityStatus `json:"status,omitempty"`
-	requeue bool
-	changed bool
-}
-
-func (in *Capability) HasChanged() bool {
-	return in.changed
-}
-
-func (in *Capability) SetHasChanged(changed bool) {
-	in.changed = in.changed || changed
-}
-
-func (in *Capability) SetNeedsRequeue(requeue bool) {
-	in.requeue = in.requeue || requeue
-}
-
-func (in *Capability) NeedsRequeue() bool {
-	return in.requeue
-}
-
-func (in *Capability) SetInitialStatus(msg string) bool {
-	if CapabilityPending != in.Status.Phase || in.Status.Message != msg {
-		in.Status.Phase = CapabilityPending
-		in.Status.Message = msg
-		in.SetHasChanged(true)
-		in.SetNeedsRequeue(true)
-		return true
-	}
-	return false
-}
-
-func (in *Capability) IsValid() bool {
-	return true // todo: implement me
-}
-
-func (in *Capability) SetErrorStatus(err error) bool {
-	errMsg := err.Error()
-	if CapabilityFailed != in.Status.Phase || errMsg != in.Status.Message {
-		in.Status.Phase = CapabilityFailed
-		in.Status.Message = errMsg
-		in.SetHasChanged(true)
-		in.SetNeedsRequeue(false)
-		return true
-	}
-	return false
-}
-
-func (in *Capability) SetSuccessStatus(dependentName, msg string) bool {
-	if dependentName != in.Status.PodName || CapabilityReady != in.Status.Phase || msg != in.Status.Message {
-		in.Status.Phase = CapabilityReady
-		in.Status.PodName = dependentName
-		in.Status.Message = msg
-		in.SetHasChanged(true)
-		in.requeue = false
-		return true
-	}
-	return false
-}
-
-func (in *Capability) GetStatusAsString() string {
-	return in.Status.Phase.String()
-}
-
-func (in *Capability) ShouldDelete() bool {
-	return !in.DeletionTimestamp.IsZero()
+	Spec   CapabilitySpec   `json:"spec,omitempty"`
+	Status CapabilityStatus `json:"status,omitempty"`
 }
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
