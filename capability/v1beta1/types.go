@@ -3,6 +3,7 @@ package v1beta1
 import (
 	"halkyon.io/api/v1beta1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"strings"
 )
 
 const Kind string = "Capability"
@@ -33,7 +34,24 @@ type CapabilitySpec struct {
 }
 
 type CapabilityCategory string
+
+func (cc CapabilityCategory) String() string {
+	return string(cc)
+}
+
+func (cc CapabilityCategory) Equals(other CapabilityCategory) bool {
+	return strings.ToLower(cc.String()) == strings.ToLower(other.String())
+}
+
 type CapabilityType string
+
+func (ct CapabilityType) String() string {
+	return string(ct)
+}
+
+func (ct CapabilityType) Equals(other CapabilityType) bool {
+	return strings.ToLower(ct.String()) == strings.ToLower(other.String())
+}
 
 const (
 	DatabaseCategory CapabilityCategory = "Database"
@@ -47,6 +65,10 @@ type CapabilityPhase string
 
 func (c CapabilityPhase) String() string {
 	return string(c)
+}
+
+func (c CapabilityPhase) Equals(other CapabilityPhase) bool {
+	return strings.ToLower(c.String()) == strings.ToLower(other.String())
 }
 
 const (

@@ -3,6 +3,7 @@ package v1beta1
 import (
 	"halkyon.io/api/v1beta1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"strings"
 )
 
 const Kind string = "Link"
@@ -16,6 +17,10 @@ const (
 
 func (l LinkType) String() string {
 	return string(l)
+}
+
+func (l LinkType) Equals(other LinkType) bool {
+	return strings.ToLower(l.String()) == strings.ToLower(other.String())
 }
 
 // LinkSpec defines the desired state of Link
@@ -35,6 +40,10 @@ type LinkPhase string
 
 func (l LinkPhase) String() string {
 	return string(l)
+}
+
+func (l LinkPhase) Equals(other LinkPhase) bool {
+	return strings.ToLower(l.String()) == strings.ToLower(other.String())
 }
 
 const (

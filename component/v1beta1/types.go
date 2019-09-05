@@ -3,6 +3,7 @@ package v1beta1
 import (
 	common "halkyon.io/api/v1beta1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"strings"
 )
 
 const Kind string = "Component"
@@ -11,6 +12,10 @@ type DeploymentMode string
 
 func (dm DeploymentMode) String() string {
 	return string(dm)
+}
+
+func (dm DeploymentMode) Equals(other DeploymentMode) bool {
+	return strings.ToLower(dm.String()) == strings.ToLower(other.String())
 }
 
 const (
@@ -69,6 +74,10 @@ type ComponentPhase string
 
 func (cp ComponentPhase) String() string {
 	return string(cp)
+}
+
+func (cp ComponentPhase) Equals(other ComponentPhase) bool {
+	return strings.ToLower(cp.String()) == strings.ToLower(other.String())
 }
 
 const (
