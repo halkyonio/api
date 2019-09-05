@@ -91,7 +91,7 @@ func (in *LinkSpec) DeepCopyInto(out *LinkSpec) {
 	*out = *in
 	if in.Envs != nil {
 		in, out := &in.Envs, &out.Envs
-		*out = make([]apiv1beta1.Env, len(*in))
+		*out = make([]apiv1beta1.NameValuePair, len(*in))
 		copy(*out, *in)
 	}
 	return

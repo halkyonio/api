@@ -27,10 +27,10 @@ type CapabilitySpec struct {
 			    - name: DB_PASSWORD  // WILL BE USED TO CREATE THE DB SECRET
 			       value: "admin"
 	*/
-	Category   CapabilityCategory  `json:"category"`
-	Type       CapabilityType      `json:"type"`
-	Version    string              `json:"version"`
-	Parameters []v1beta1.Parameter `json:"parameters,omitempty"`
+	Category   CapabilityCategory      `json:"category"`
+	Type       CapabilityType          `json:"type"`
+	Version    string                  `json:"version"`
+	Parameters []v1beta1.NameValuePair `json:"parameters,omitempty"`
 }
 
 type CapabilityCategory string

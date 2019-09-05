@@ -91,7 +91,7 @@ func (in *CapabilitySpec) DeepCopyInto(out *CapabilitySpec) {
 	*out = *in
 	if in.Parameters != nil {
 		in, out := &in.Parameters, &out.Parameters
-		*out = make([]apiv1beta1.Parameter, len(*in))
+		*out = make([]apiv1beta1.NameValuePair, len(*in))
 		copy(*out, *in)
 	}
 	return

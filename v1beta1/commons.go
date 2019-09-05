@@ -12,12 +12,7 @@ const (
 	RuntimeVersionLabelKey = "app.openshift.io/version"
 )
 
-type Env struct {
-	Name  string `json:"name,omitempty"`
-	Value string `json:"value,omitempty"`
-}
-
-type Parameter struct {
+type NameValuePair struct {
 	Name  string `json:"name,omitempty"`
 	Value string `json:"value,omitempty"`
 }

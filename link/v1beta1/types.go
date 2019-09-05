@@ -33,7 +33,7 @@ type LinkSpec struct {
 	Type          LinkType `json:"type,omitempty"`
 	Ref           string   `json:"ref,omitempty"`
 	// Array of env variables containing extra/additional info to be used to configure the runtime
-	Envs []v1beta1.Env `json:"envs,omitempty"`
+	Envs []v1beta1.NameValuePair `json:"envs,omitempty"`
 }
 
 type LinkPhase string
