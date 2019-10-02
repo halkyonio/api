@@ -100,6 +100,8 @@ const (
 	ComponentUnknown ComponentPhase = "Unknown"
 	// ComponentBuilding means that the Build mode has been configured and that a build task is running
 	ComponentBuilding ComponentPhase = "Building"
+	// ComponentLinking means that the component is attempting to link to another component or capability
+	ComponentLinking ComponentPhase = "Linking"
 )
 
 // ComponentStatus defines the observed state of Component
