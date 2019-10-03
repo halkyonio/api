@@ -109,8 +109,55 @@ const (
 type ComponentStatus struct {
 	Phase   ComponentPhase `json:"phase,omitempty"`
 	PodName string         `json:"podName,omitempty"`
+	Links   []Link         `json:"links,omitempty"`
 	Message string         `json:"message,omitempty"`
 }
+
+func (in *ComponentStatus) SetLinkingStatus(linkName string, status LinkingStatus, originalPodName string) bool {
+	for i, link := range in.Links {
+		if link.Name == linkName {
+			if link.Status != status && link.OriginalPodName != originalPodName {
+				link.Status = status
+				link.OriginalPodName = originalPodName
+				in.Links[i] = link
+				return true
+			} else {
+				return false
+			}
+		}
+	}
+
+	in.Links = append(in.Links, Link{
+		Name:            linkName,
+		Status:          status,
+		OriginalPodName: originalPodName,
+	})
+	return true
+}
+
+func (in *ComponentStatus) AreLinksReady() bool {
+	for _, link := range in.Links {
+		if link.Status != Linked {
+			return false
+		}
+	}
+
+	return true
+}
+
+type Link struct {
+	Name            string
+	Status          LinkingStatus
+	OriginalPodName string
+}
+
+type LinkingStatus string
+
+const (
+	Started LinkingStatus = "Started"
+	Linked  LinkingStatus = "Linked"
+	Errored LinkingStatus = "Errored"
+)
 
 type Storage struct {
 	Name     string `json:"name,omitempty"`
@@ -129,6 +176,14 @@ type Component struct {
 
 	Spec   ComponentSpec   `json:"spec,omitempty"`
 	Status ComponentStatus `json:"status,omitempty"`
+}
+
+func (in *Component) IsReady() bool {
+	ready := in.Status.AreLinksReady()
+	if !ready {
+		in.Status.Phase = ComponentLinking
+	}
+	return in.Status.Phase == ComponentReady || in.Status.Phase == ComponentRunning
 }
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
