@@ -11,6 +11,7 @@ require (
 	github.com/googleapis/gnostic v0.3.0 // indirect
 	github.com/gregjones/httpcache v0.0.0-20190611155906-901d90724c79 // indirect
 	github.com/json-iterator/go v1.1.8 // indirect
+	github.com/kr/pretty v0.1.0 // indirect
 	github.com/peterbourgon/diskv v2.0.1+incompatible // indirect
 	github.com/pkg/errors v0.8.1 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
@@ -27,6 +28,7 @@ require (
 	k8s.io/code-generator v0.0.0-20181117043124-c2090bec4d9b
 	k8s.io/gengo v0.0.0-20191108084044-e500ee069b5c // indirect
 	k8s.io/klog v1.0.0 // indirect
+	k8s.io/kube-openapi v0.0.0-20191107075043-30be4d16710a // indirect
 )
 
 // Pinned to kubernetes-1.13.4
