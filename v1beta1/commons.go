@@ -1,5 +1,10 @@
 package v1beta1
 
+import (
+	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/runtime/schema"
+)
+
 const (
 	// See https://kubernetes.io/docs/concepts/overview/working-with-objects/common-labels/
 	NameLabelKey           = "app.kubernetes.io/name"
@@ -15,4 +20,9 @@ const (
 type NameValuePair struct {
 	Name  string `json:"name,omitempty"`
 	Value string `json:"value,omitempty"`
+}
+
+type HalkyonResource interface {
+	v1.Object
+	GetGroupVersionKind() schema.GroupVersionKind
 }
