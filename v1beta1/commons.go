@@ -2,6 +2,7 @@ package v1beta1
 
 import (
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 )
 
@@ -24,5 +25,6 @@ type NameValuePair struct {
 
 type HalkyonResource interface {
 	v1.Object
+	runtime.Object
 	GetGroupVersionKind() schema.GroupVersionKind
 }
