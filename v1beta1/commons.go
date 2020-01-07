@@ -27,4 +27,5 @@ type HalkyonResource interface {
 	v1.Object
 	runtime.Object
 	GetGroupVersionKind() schema.GroupVersionKind
+	Prototype() runtime.Object
 }
