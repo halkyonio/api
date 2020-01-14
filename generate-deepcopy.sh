@@ -35,7 +35,7 @@ git clone https://github.com/kubernetes/code-generator.git "${TMP_DIR}"
 #   generate-groups.sh all             github.com/example/project/pkg/client github.com/example/project/pkg/apis "foo:v1 bar:v1alpha1,v1beta1"
 #   generate-groups.sh deepcopy,client github.com/example/project/pkg/client github.com/example/project/pkg/apis "foo:v1 bar:v1alpha1,v1beta1"
 
-for group in capability component link; do
+for group in capability component link runtime capability-info; do
   "${TMP_DIR}"/generate-groups.sh "deepcopy,client" \
     halkyon.io/api/${group} \
     halkyon.io/api \
