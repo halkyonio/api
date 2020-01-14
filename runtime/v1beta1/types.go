@@ -16,7 +16,6 @@ type RuntimeSpec struct {
 	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
 	// Important: Run "operator-sdk generate k8s" to regenerate code after modifying this file
 	// Add custom validation using kubebuilder tags: https://book-v1.book.kubebuilder.io/beyond_basics/generating_crd.html
-	Name      string   `json:"name"`
 	Versions  []string `json:"versions"`
 	Generator string   `json:"generator"`
 	Image     string   `json:"image"`
