@@ -4,6 +4,8 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
+	"strings"
+	"text/template"
 )
 
 const Kind string = "Runtime"
@@ -16,9 +18,11 @@ type RuntimeSpec struct {
 	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
 	// Important: Run "operator-sdk generate k8s" to regenerate code after modifying this file
 	// Add custom validation using kubebuilder tags: https://book-v1.book.kubebuilder.io/beyond_basics/generating_crd.html
-	Versions  []string `json:"versions"`
-	Generator string   `json:"generator"`
-	Image     string   `json:"image"`
+	Name              string `json:"name"`
+	Version           string `json:"version"`
+	GeneratorTemplate string `json:"generator,omitempty"`
+	Image             string `json:"image"`
+	ExecutablePattern string `json:"executablePattern"`
 }
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
