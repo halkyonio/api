@@ -4,6 +4,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
+	"strings"
 )
 
 const Kind string = "CapabilityInfo"
@@ -16,9 +17,15 @@ type CapabilityInfoSpec struct {
 	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
 	// Important: Run "operator-sdk generate k8s" to regenerate code after modifying this file
 	// Add custom validation using kubebuilder tags: https://book-v1.book.kubebuilder.io/beyond_basics/generating_crd.html
-	Versions []string `json:"versions"`
-	Category string   `json:"category"`
-	Type     string   `json:"type"`
+	Versions string `json:"versions"`
+	Category string `json:"category"`
+	Type     string `json:"type"`
+}
+
+const CapabilityInfoVersionSeparator = " / "
+
+func VersionsAsString(versions ...string) string {
+	return strings.Join(versions, CapabilityInfoVersionSeparator)
 }
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
