@@ -25,6 +25,30 @@ type RuntimeSpec struct {
 	ExecutablePattern string `json:"executablePattern"`
 }
 
+type GeneratorOptions struct {
+	RuntimeVersion  string
+	GroupId         string
+	ArtifactId      string
+	ProjectVersion  string
+	PackageName     string
+	ProjectTemplate string
+	ArchiveName     string
+}
+
+func ComputeGeneratorURL(generatorTemplate string, options GeneratorOptions) (string, error) {
+	t := template.New("generator")
+	parsed, err := t.Parse(generatorTemplate)
+	if err != nil {
+		return "", err
+	}
+	builder := &strings.Builder{}
+	err = parsed.Execute(builder, options)
+	if err != nil {
+		return "", err
+	}
+	return builder.String(), nil
+}
+
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 
 // Runtime is the Schema for the runtimes API
