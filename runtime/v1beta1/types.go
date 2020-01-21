@@ -1,6 +1,7 @@
 package v1beta1
 
 import (
+	"halkyon.io/api/v1beta1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
@@ -23,6 +24,8 @@ type RuntimeSpec struct {
 	GeneratorTemplate string `json:"generator,omitempty"`
 	Image             string `json:"image"`
 	ExecutablePattern string `json:"executablePattern"`
+	// Array of env variables containing extra/additional info to be passed to all applications using this runtime
+	Envs []v1beta1.NameValuePair `json:"envs,omitempty"`
 }
 
 type GeneratorOptions struct {
