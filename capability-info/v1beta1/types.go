@@ -31,7 +31,7 @@ func VersionsAsString(versions ...string) string {
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 
 // CapabilityInfo is the Schema for the runtimes API
-// +kubebuilder:resource:path=runtimes
+// +kubebuilder:resource:path=capabilityinfos
 // +genclient
 // +genclient:nonNamespaced
 type CapabilityInfo struct {
