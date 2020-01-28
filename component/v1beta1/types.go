@@ -1,6 +1,7 @@
 package v1beta1
 
 import (
+	"halkyon.io/api/capability/v1beta1"
 	common "halkyon.io/api/v1beta1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -69,7 +70,19 @@ type ComponentSpec struct {
 	Envs     []common.NameValuePair `json:"envs,omitempty"`
 	Revision string                 `json:"revision,omitempty"`
 	// Build configuration used to execute a TekTon Build task
-	BuildConfig BuildConfig `json:"buildConfig,omitempty"`
+	BuildConfig  BuildConfig        `json:"buildConfig,omitempty"`
+	Capabilities CapabilitiesConfig `json:"capabilities,omitempty"`
+}
+
+type CapabilityConfig struct {
+	Name         string                 `json:"name"`
+	BoundTo      string                 `json:"boundTo,omitempty"`
+	AutoBindable bool                   `json:"autoBindable,omitempty"`
+	Spec         v1beta1.CapabilitySpec `json:"spec"`
+}
+type CapabilitiesConfig struct {
+	Requires []CapabilityConfig       `json:"requires,omitempty"`
+	Provides []v1beta1.CapabilitySpec `json:"provides,omitempty"`
 }
 
 type ComponentPhase string
