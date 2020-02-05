@@ -29,3 +29,139 @@ type HalkyonResource interface {
 	GetGroupVersionKind() schema.GroupVersionKind
 	Prototype() runtime.Object
 }
+
+// DependentConditionType is a valid value for DependentCondition.Type
+type DependentConditionType string
+
+// These are valid dependent conditions.
+const (
+	// DependentReady means the dependent is able to service requests.
+	DependentReady DependentConditionType = "Ready"
+	// DependentPending means that the dependent is still processing.
+	DependentPending DependentConditionType = "Pending"
+	// DependentFailed means that the dependent is in error and probably requires user intervention to get back to working state.
+	DependentFailed   DependentConditionType = "Failed"
+	DependentLinkable DependentConditionType = "Linkable"
+	DependentLinking  DependentConditionType = "Linking"
+	DependentLinked   DependentConditionType = "Linked"
+)
+
+// DependentCondition contains details for the current condition of .
+type DependentCondition struct {
+	// Type is the type of the condition.
+	Type DependentConditionType `json:"type"`
+	// Type of the dependent associated with the condition.
+	DependentType schema.GroupVersionKind `json:"dependentType"`
+	// Name of the dependent associated with the condition.
+	DependentName string `json:"dependentName"`
+	// Last time we probed the condition.
+	// +optional
+	LastProbeTime v1.Time `json:"lastProbeTime,omitempty"`
+	// Last time the condition transitioned from one status to another.
+	// +optional
+	LastTransitionTime v1.Time `json:"lastTransitionTime,omitempty"`
+	// Unique, one-word, CamelCase reason for the condition's last transition.
+	// +optional
+	Reason string `json:"reason,omitempty"`
+	// Human-readable message indicating details about last transition.
+	// +optional
+	Message string `json:"message,omitempty"`
+	// Additional information that the condition wishes to convey/record as name-value pairs.
+	// +optional
+	Attributes []NameValuePair `json:"attributes,omitempty"`
+}
+
+type Status struct {
+	LastUpdate v1.Time              `json:"lastUpdate,omitempty"`
+	Reason     string               `json:"reason,omitempty"`
+	Message    string               `json:"message,omitempty"`
+	Conditions []DependentCondition `json:"conditions,omitempty"`
+}
+
+func (in *Status) GetConditionFor(name string, gvk schema.GroupVersionKind) (existingOrNew *DependentCondition) {
+	if in.Conditions == nil {
+		in.Conditions = make([]DependentCondition, 0, 15)
+	}
+	for _, condition := range in.Conditions {
+		if condition.DependentName == name && condition.DependentType == gvk {
+			return &condition
+		}
+	}
+	existingOrNew = &DependentCondition{
+		DependentType: gvk,
+		DependentName: name,
+	}
+	in.Conditions = append(in.Conditions, *existingOrNew)
+	return
+}
+
+func (in *DependentCondition) GetAttribute(name string) string {
+	for _, attribute := range in.Attributes {
+		if attribute.Name == name {
+			return attribute.Value
+		}
+	}
+	return ""
+}
+
+func (in *DependentCondition) SetAttribute(name, value string) string {
+	for i, attribute := range in.Attributes {
+		if attribute.Name == name {
+			in.Attributes[i] = NameValuePair{
+				Name:  attribute.Name,
+				Value: value,
+			}
+			return attribute.Value
+		}
+	}
+	return ""
+}
+
+type StatusAware interface {
+	GetStatus() Status
+	SetStatus(status Status)
+}
+
+func (in *DependentCondition) DeepCopyInto(out *DependentCondition) {
+	*out = *in
+	out.DependentType = in.DependentType
+	in.LastProbeTime.DeepCopyInto(&out.LastProbeTime)
+	in.LastTransitionTime.DeepCopyInto(&out.LastTransitionTime)
+	if in.Attributes != nil {
+		in, out := &in.Attributes, &out.Attributes
+		*out = make([]NameValuePair, len(*in))
+		copy(*out, *in)
+	}
+	return
+}
+
+func (in *DependentCondition) DeepCopy() *DependentCondition {
+	if in == nil {
+		return nil
+	}
+	out := new(DependentCondition)
+	in.DeepCopyInto(out)
+	return out
+}
+
+func (in *Status) DeepCopyInto(out *Status) {
+	*out = *in
+	in.LastUpdate.DeepCopyInto(&out.LastUpdate)
+	if in.Conditions != nil {
+		in, out := &in.Conditions, &out.Conditions
+		*out = make([]DependentCondition, len(*in))
+		for i := range *in {
+			(*in)[i].DeepCopyInto(&(*out)[i])
+		}
+	}
+	return
+}
+
+func (in *Status) DeepCopy() *Status {
+	if in == nil {
+		return nil
+	}
+	out := new(Status)
+	in.DeepCopyInto(out)
+	return out
+}
