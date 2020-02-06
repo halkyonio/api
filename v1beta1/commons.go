@@ -109,7 +109,9 @@ func (in *Status) SetCondition(condition *DependentCondition, conditionType Depe
 		condition.Type = conditionType
 		condition.Message = message
 		condition.Reason = string(conditionType)
-		condition.LastTransitionTime = v1.NewTime(time.Now())
+		now := v1.NewTime(time.Now())
+		condition.LastTransitionTime = now
+		in.LastUpdate = now
 		in.Conditions[*condition.index] = *condition // update the array with the new condition
 		return true
 	}
