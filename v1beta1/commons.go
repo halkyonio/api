@@ -4,6 +4,7 @@ import (
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
+	"time"
 )
 
 const (
@@ -69,6 +70,7 @@ type DependentCondition struct {
 	// Additional information that the condition wishes to convey/record as name-value pairs.
 	// +optional
 	Attributes []NameValuePair `json:"attributes,omitempty"`
+	index      *int
 }
 
 type Status struct {
@@ -82,8 +84,10 @@ func (in *Status) GetConditionFor(name string, gvk schema.GroupVersionKind) (exi
 	if in.Conditions == nil {
 		in.Conditions = make([]DependentCondition, 0, 15)
 	}
-	for _, condition := range in.Conditions {
+	for i, condition := range in.Conditions {
+		condition.index = &i // always set the index to make sure it is set
 		if condition.DependentName == name && condition.DependentType == gvk {
+			condition.LastProbeTime = v1.NewTime(time.Now())
 			return &condition
 		}
 	}
@@ -91,8 +95,25 @@ func (in *Status) GetConditionFor(name string, gvk schema.GroupVersionKind) (exi
 		DependentType: gvk,
 		DependentName: name,
 	}
+	*existingOrNew.index = len(in.Conditions)
 	in.Conditions = append(in.Conditions, *existingOrNew)
 	return
+}
+
+func (in *Status) SetCondition(condition *DependentCondition, conditionType DependentConditionType, message string) bool {
+	// if, for some reason, the index is not set on the condition, retrieve the condition again from the array as this sets the index
+	if condition.index == nil {
+		condition = in.GetConditionFor(condition.DependentName, condition.DependentType)
+	}
+	if condition.Type != conditionType || condition.Message != message {
+		condition.Type = conditionType
+		condition.Message = message
+		condition.Reason = string(conditionType)
+		condition.LastTransitionTime = v1.NewTime(time.Now())
+		in.Conditions[*condition.index] = *condition // update the array with the new condition
+		return true
+	}
+	return false
 }
 
 func (in *DependentCondition) GetAttribute(name string) string {
