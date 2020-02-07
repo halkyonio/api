@@ -73,6 +73,18 @@ type DependentCondition struct {
 	index      *int
 }
 
+const (
+	// ReasonPending means the entity has been accepted by the system, but it is still being processed. This includes time
+	// being instantiated.
+	ReasonPending = "Pending"
+	// ReasonReady means the entity has been instantiated to a node and all of its dependencies are available. The
+	// entity is able to process requests.
+	ReasonReady = "Ready"
+	// ReasonFailed means that the entity or some of its dependencies have failed and cannot be salvaged without user
+	// intervention.
+	ReasonFailed = "Failed"
+)
+
 type Status struct {
 	LastUpdate v1.Time              `json:"lastUpdate,omitempty"`
 	Reason     string               `json:"reason,omitempty"`

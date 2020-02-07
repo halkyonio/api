@@ -63,26 +63,16 @@ const (
 	LoggingCategory CapabilityCategory = "Logging"
 )
 
-type CapabilityPhase string
-
-func (c CapabilityPhase) String() string {
-	return string(c)
-}
-
-func (c CapabilityPhase) Equals(other CapabilityPhase) bool {
-	return strings.ToLower(c.String()) == strings.ToLower(other.String())
-}
-
 const (
 	// CapabilityPending means the capability has been accepted by the system, but it is still being processed. This includes time
 	// being instantiated.
-	CapabilityPending CapabilityPhase = "Pending"
+	CapabilityPending = "Pending"
 	// CapabilityReady means the capability has been instantiated to a node and all of its dependencies are available. The
 	// capability is able to process requests.
-	CapabilityReady CapabilityPhase = "Ready"
+	CapabilityReady = "Ready"
 	// CapabilityFailed means that the capability and its dependencies have terminated, and at least one container has
 	// terminated in a failure (exited with a non-zero exit code or was stopped by the system).
-	CapabilityFailed CapabilityPhase = "Failed"
+	CapabilityFailed = "Failed"
 )
 
 // CapabilityStatus defines the observed state of Capability
