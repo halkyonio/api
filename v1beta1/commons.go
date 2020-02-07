@@ -95,6 +95,7 @@ func (in *Status) GetConditionFor(name string, gvk schema.GroupVersionKind) (exi
 		DependentType: gvk,
 		DependentName: name,
 	}
+	existingOrNew.index = new(int)
 	*existingOrNew.index = len(in.Conditions)
 	in.Conditions = append(in.Conditions, *existingOrNew)
 	return
