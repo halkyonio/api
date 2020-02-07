@@ -124,8 +124,7 @@ const (
 type ComponentStatus struct {
 	common.Status `json:",inline"`
 
-	Phase   ComponentPhase `json:"phase,omitempty"`
-	PodName string         `json:"podName,omitempty"`
+	PodName string `json:"podName,omitempty"`
 }
 
 type Storage struct {
@@ -153,10 +152,6 @@ func (in *Component) GetGroupVersionKind() schema.GroupVersionKind {
 
 func (in *Component) Prototype() runtime.Object {
 	return &Component{}
-}
-
-func (in *Component) IsReady() bool {
-	return in.Status.Phase == ComponentReady || in.Status.Phase == ComponentRunning
 }
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
