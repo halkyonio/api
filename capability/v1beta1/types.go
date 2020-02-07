@@ -92,8 +92,8 @@ type CapabilityStatus struct {
 	// Important: Run "operator-sdk generate k8s" to regenerate code after modifying this file
 	// Add custom validation using kubebuilder tags: https://book.kubebuilder.io/beyond_basics/generating_crd.html
 	v1beta1.Status
-	Phase   CapabilityPhase `json:"phase,omitempty"`
-	PodName string          `json:"podName,omitempty"`
+
+	PodName string `json:"podName,omitempty"`
 }
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
