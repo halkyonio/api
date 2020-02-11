@@ -1,6 +1,7 @@
 package v1beta1
 
 import (
+	"fmt"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
@@ -93,6 +94,9 @@ type Status struct {
 }
 
 func (in *Status) GetConditionFor(name string, gvk schema.GroupVersionKind) (existingOrNew *DependentCondition) {
+	if len(name) == 0 || gvk.Empty() {
+		panic(fmt.Errorf("a condition needs a name and a gvk"))
+	}
 	if in.Conditions == nil {
 		in.Conditions = make([]DependentCondition, 0, 15)
 	}
