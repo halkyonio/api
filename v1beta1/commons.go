@@ -158,6 +158,14 @@ func (in *DependentCondition) SetAttribute(name, value string) string {
 	return ""
 }
 
+func (in *DependentCondition) IsReady() bool {
+	return in.Type == DependentReady
+}
+
+func (in *DependentCondition) IsFailed() bool {
+	return in.Type == DependentFailed
+}
+
 type StatusAware interface {
 	GetStatus() Status
 	SetStatus(status Status)
