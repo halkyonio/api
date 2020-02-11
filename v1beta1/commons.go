@@ -150,6 +150,7 @@ func (in *DependentCondition) SetAttribute(name, value string) string {
 			return attribute.Value
 		}
 	}
+	in.Attributes = append(in.Attributes, NameValuePair{Name: name, Value: value})
 	return ""
 }
 
