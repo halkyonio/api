@@ -117,19 +117,39 @@ func (in *Status) GetConditionFor(name string, gvk schema.GroupVersionKind) (exi
 	return
 }
 
-func (in *Status) SetCondition(condition *DependentCondition, conditionType DependentConditionType, message string) bool {
-	// if, for some reason, the index is not set on the condition, retrieve the condition again from the array as this sets the index
-	if condition.index == nil {
-		condition = in.GetConditionFor(condition.DependentName, condition.DependentType)
+// SetCondition sets the given condition on the Status, returning true if the status has been modified as a result
+func (in *Status) SetCondition(condition *DependentCondition) bool {
+	if condition == nil {
+		return false
 	}
-	if condition.Type != conditionType || condition.Message != message {
-		condition.Type = conditionType
-		condition.Message = message
-		condition.Reason = string(conditionType)
+
+	// if, for some reason, the index is not set on the condition, retrieve the condition again from the array as this sets the index
+	var previous *DependentCondition
+	if condition.index == nil {
+		previous = in.GetConditionFor(condition.DependentName, condition.DependentType)
+	} else {
+		previous = &in.Conditions[*condition.index]
+	}
+
+	if condition.Type != previous.Type || condition.Message != previous.Message {
+		condition.Reason = string(condition.Type)
 		now := v1.NewTime(time.Now())
 		condition.LastTransitionTime = now
 		in.LastUpdate = now
-		in.Conditions[*condition.index] = *condition // update the array with the new condition
+		in.Conditions[*previous.index] = *condition // update the array with the new condition
+
+		// re-compute overall status
+		in.Reason = ReasonReady
+		for _, c := range in.Conditions {
+			// if the condition isn't ready, then the overall status should be pending
+			if !c.IsReady() {
+				in.Reason = ReasonPending
+			}
+			// if the condition is failed, then the overall status should be failed
+			if c.IsFailed() {
+				in.Reason = ReasonFailed
+			}
+		}
 		return true
 	}
 	return false
