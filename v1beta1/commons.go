@@ -71,7 +71,6 @@ type DependentCondition struct {
 	// Additional information that the condition wishes to convey/record as name-value pairs.
 	// +optional
 	Attributes []NameValuePair `json:"attributes,omitempty"`
-	index      *int
 }
 
 const (
@@ -94,6 +93,11 @@ type Status struct {
 }
 
 func (in *Status) GetConditionFor(name string, gvk schema.GroupVersionKind) (existingOrNew *DependentCondition) {
+	_, condition := in.indexAndConditionWith(name, gvk)
+	return condition
+}
+
+func (in *Status) indexAndConditionWith(name string, gvk schema.GroupVersionKind) (index int, existingOrNew *DependentCondition) {
 	if len(name) == 0 || gvk.Empty() {
 		panic(fmt.Errorf("a condition needs a name and a gvk"))
 	}
@@ -101,18 +105,16 @@ func (in *Status) GetConditionFor(name string, gvk schema.GroupVersionKind) (exi
 		in.Conditions = make([]DependentCondition, 0, 15)
 	}
 	for i, condition := range in.Conditions {
-		condition.index = &i // always set the index to make sure it is set
 		if condition.DependentName == name && condition.DependentType == gvk {
 			condition.LastProbeTime = v1.NewTime(time.Now())
-			return &condition
+			return i, &condition
 		}
 	}
 	existingOrNew = &DependentCondition{
 		DependentType: gvk,
 		DependentName: name,
 	}
-	existingOrNew.index = new(int)
-	*existingOrNew.index = len(in.Conditions)
+	index = len(in.Conditions)
 	in.Conditions = append(in.Conditions, *existingOrNew)
 	return
 }
@@ -124,19 +126,13 @@ func (in *Status) SetCondition(condition *DependentCondition) bool {
 	}
 
 	// if, for some reason, the index is not set on the condition, retrieve the condition again from the array as this sets the index
-	var previous *DependentCondition
-	if condition.index == nil {
-		previous = in.GetConditionFor(condition.DependentName, condition.DependentType)
-	} else {
-		previous = &in.Conditions[*condition.index]
-	}
-
+	index, previous := in.indexAndConditionWith(condition.DependentName, condition.DependentType)
 	if condition.Type != previous.Type || condition.Message != previous.Message {
 		condition.Reason = string(condition.Type)
 		now := v1.NewTime(time.Now())
 		condition.LastTransitionTime = now
 		in.LastUpdate = now
-		in.Conditions[*previous.index] = *condition // update the array with the new condition
+		in.Conditions[index] = *condition // update the array with the new condition
 
 		// re-compute overall status
 		in.Reason = ReasonReady
