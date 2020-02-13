@@ -92,6 +92,20 @@ type Status struct {
 	Conditions []DependentCondition `json:"conditions,omitempty"`
 }
 
+func (in *Status) GetConditionsWith(gvk schema.GroupVersionKind) []DependentCondition {
+	if gvk.Empty() {
+		return []DependentCondition{}
+	}
+
+	conditions := make([]DependentCondition, 0, len(in.Conditions))
+	for _, condition := range in.Conditions {
+		if condition.DependentType == gvk {
+			conditions = append(conditions, condition)
+		}
+	}
+	return conditions
+}
+
 func (in *Status) GetConditionFor(name string, gvk schema.GroupVersionKind) (existingOrNew *DependentCondition) {
 	_, condition := in.indexAndConditionWith(name, gvk)
 	return condition
