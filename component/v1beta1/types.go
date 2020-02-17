@@ -75,14 +75,18 @@ type ComponentSpec struct {
 }
 
 type CapabilityConfig struct {
-	Name         string                 `json:"name"`
-	BoundTo      string                 `json:"boundTo,omitempty"`
-	AutoBindable bool                   `json:"autoBindable,omitempty"`
-	Spec         v1beta1.CapabilitySpec `json:"spec"`
+	Name string                 `json:"name"`
+	Spec v1beta1.CapabilitySpec `json:"spec"`
+}
+
+type RequiredCapabilityConfig struct {
+	CapabilityConfig `json:",inline"`
+	BoundTo          string `json:"boundTo,omitempty"`
+	AutoBindable     bool   `json:"autoBindable,omitempty"`
 }
 type CapabilitiesConfig struct {
-	Requires []CapabilityConfig       `json:"requires,omitempty"`
-	Provides []v1beta1.CapabilitySpec `json:"provides,omitempty"`
+	Requires []RequiredCapabilityConfig `json:"requires,omitempty"`
+	Provides []CapabilityConfig         `json:"provides,omitempty"`
 }
 
 const (
