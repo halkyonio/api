@@ -42,10 +42,7 @@ const (
 	// DependentPending means that the dependent is still processing.
 	DependentPending DependentConditionType = "Pending"
 	// DependentFailed means that the dependent is in error and probably requires user intervention to get back to working state.
-	DependentFailed   DependentConditionType = "Failed"
-	DependentLinkable DependentConditionType = "Linkable"
-	DependentLinking  DependentConditionType = "Linking"
-	DependentLinked   DependentConditionType = "Linked"
+	DependentFailed DependentConditionType = "Failed"
 )
 
 // DependentCondition contains details for the current condition of .
