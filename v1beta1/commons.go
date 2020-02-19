@@ -3,7 +3,6 @@ package v1beta1
 import (
 	"fmt"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"time"
 )
@@ -23,13 +22,6 @@ const (
 type NameValuePair struct {
 	Name  string `json:"name,omitempty"`
 	Value string `json:"value,omitempty"`
-}
-
-type HalkyonResource interface {
-	v1.Object
-	runtime.Object
-	GetGroupVersionKind() schema.GroupVersionKind
-	Prototype() runtime.Object
 }
 
 // DependentConditionType is a valid value for DependentCondition.Type
