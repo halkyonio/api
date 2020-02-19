@@ -53,9 +53,6 @@ type DependentCondition struct {
 	DependentType schema.GroupVersionKind `json:"dependentType"`
 	// Name of the dependent associated with the condition.
 	DependentName string `json:"dependentName"`
-	// Last time we probed the condition.
-	// +optional
-	LastProbeTime v1.Time `json:"lastProbeTime,omitempty"`
 	// Last time the condition transitioned from one status to another.
 	// +optional
 	LastTransitionTime v1.Time `json:"lastTransitionTime,omitempty"`
@@ -117,7 +114,6 @@ func (in *Status) indexAndConditionWith(name string, gvk schema.GroupVersionKind
 	}
 	for i, condition := range in.Conditions {
 		if condition.DependentName == name && condition.DependentType == gvk {
-			condition.LastProbeTime = v1.NewTime(time.Now())
 			return i, &condition
 		}
 	}
@@ -201,7 +197,6 @@ type StatusAware interface {
 func (in *DependentCondition) DeepCopyInto(out *DependentCondition) {
 	*out = *in
 	out.DependentType = in.DependentType
-	in.LastProbeTime.DeepCopyInto(&out.LastProbeTime)
 	in.LastTransitionTime.DeepCopyInto(&out.LastTransitionTime)
 	if in.Attributes != nil {
 		in, out := &in.Attributes, &out.Attributes
