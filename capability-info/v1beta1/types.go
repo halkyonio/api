@@ -2,7 +2,6 @@ package v1beta1
 
 import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"strings"
 )
@@ -52,8 +51,4 @@ type CapabilityInfoList struct {
 
 func (in *CapabilityInfo) GetGroupVersionKind() schema.GroupVersionKind {
 	return SchemeGroupVersion.WithKind(Kind)
-}
-
-func (in *CapabilityInfo) Prototype() runtime.Object {
-	return &CapabilityInfo{}
 }

@@ -3,7 +3,6 @@ package v1beta1
 import (
 	"halkyon.io/api/v1beta1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"strings"
 	"text/template"
@@ -76,8 +75,4 @@ type RuntimeList struct {
 
 func (in *Runtime) GetGroupVersionKind() schema.GroupVersionKind {
 	return SchemeGroupVersion.WithKind(Kind)
-}
-
-func (in *Runtime) Prototype() runtime.Object {
-	return &Runtime{}
 }

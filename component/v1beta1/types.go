@@ -4,7 +4,6 @@ import (
 	"halkyon.io/api/capability/v1beta1"
 	common "halkyon.io/api/v1beta1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"strings"
 )
@@ -139,10 +138,6 @@ type Component struct {
 
 func (in *Component) GetGroupVersionKind() schema.GroupVersionKind {
 	return SchemeGroupVersion.WithKind(Kind)
-}
-
-func (in *Component) Prototype() runtime.Object {
-	return &Component{}
 }
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
