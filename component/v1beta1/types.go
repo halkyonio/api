@@ -113,8 +113,22 @@ const (
 // +k8s:openapi-gen=true
 type ComponentStatus struct {
 	common.Status `json:",inline"`
+}
 
-	PodName string `json:"podName,omitempty"`
+var PodGVK = schema.GroupVersionKind{
+	Group:   "",
+	Version: "v1",
+	Kind:    "Pod",
+}
+
+const PodNameAttributeKey = "PodName"
+
+func (in ComponentStatus) GetAssociatedPodName() string {
+	podCondition := in.GetConditionsWith(PodGVK)
+	if len(podCondition) != 1 {
+		return ""
+	}
+	return podCondition[0].GetAttribute(PodNameAttributeKey)
 }
 
 type Storage struct {
