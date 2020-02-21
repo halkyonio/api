@@ -4,6 +4,7 @@ import (
 	"fmt"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime/schema"
+	"strings"
 	"time"
 )
 
@@ -119,7 +120,7 @@ func (in *Status) indexAndConditionWith(name string, gvk schema.GroupVersionKind
 }
 
 // SetCondition sets the given condition on the Status, returning true if the status has been modified as a result
-func (in *Status) SetCondition(condition *DependentCondition) bool {
+func (in *Status) SetCondition(condition *DependentCondition) (updated bool) {
 	if condition == nil {
 		return false
 	}
@@ -132,22 +133,36 @@ func (in *Status) SetCondition(condition *DependentCondition) bool {
 		condition.LastTransitionTime = now
 		in.LastUpdate = now
 		in.Conditions[index] = *condition // update the array with the new condition
-
-		// re-compute overall status
-		in.Reason = ReasonReady
-		for _, c := range in.Conditions {
-			// if the condition isn't ready, then the overall status should be pending
-			if !c.IsReady() {
-				in.Reason = ReasonPending
-			}
-			// if the condition is failed, then the overall status should be failed
-			if c.IsFailed() {
-				in.Reason = ReasonFailed
-			}
-		}
-		return true
+		updated = true
 	}
-	return false
+
+	// re-compute overall status
+	overall := ReasonReady
+	conditionMessages := make([]string, 0, len(in.Conditions))
+	for _, c := range in.Conditions {
+		// if the condition isn't ready, then the overall status should be pending
+		if !c.IsReady() {
+			if len(c.Message) > 0 {
+				conditionMessages = append(conditionMessages, c.Message)
+			}
+			overall = ReasonPending
+		}
+		// if the condition is failed, then the overall status should be failed
+		if c.IsFailed() {
+			overall = ReasonFailed
+		}
+	}
+	if in.Reason != overall {
+		in.Reason = overall
+		updated = true
+	}
+	msg := strings.Join(conditionMessages, ", ")
+	if in.Message != msg {
+		in.Message = msg
+		updated = true
+	}
+
+	return
 }
 
 func (in *DependentCondition) GetAttribute(name string) string {

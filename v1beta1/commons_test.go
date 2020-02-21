@@ -5,11 +5,7 @@ import (
 	"testing"
 )
 
-func readyStatus(conditions ...*DependentCondition) Status {
-	status := status(conditions...)
-	status.Reason = ReasonReady
-	return status
-}
+const initialStatusMessage = "Initial"
 
 func status(conditions ...*DependentCondition) Status {
 	status := Status{}
@@ -18,6 +14,7 @@ func status(conditions ...*DependentCondition) Status {
 		dc = append(dc, *condition)
 	}
 	status.Conditions = dc
+	status.Message = initialStatusMessage
 	return status
 }
 
@@ -42,18 +39,66 @@ func TestSetCondition(t *testing.T) {
 		conditionNb    int
 		changed        bool
 	}{
-		{"setting nil shouldn't do anything", Status{}, "", nil, 0, false},
-		{"properly add condition", Status{}, ReasonReady, condition(DependentReady), 1, true},
-		{"updating a condition to ready when it was pending before should result in ready status", status(condition(DependentPending)), ReasonReady, condition(DependentReady), 1, true},
-		{"failed condition should result in failed status", status(condition(DependentReady, "ready"), condition(DependentPending, "pending"), condition(DependentReady, "failed")), ReasonFailed, condition(DependentFailed, "failed"), 3, true},
-		{"not ready condition should result in not ready status", status(condition(DependentReady, "ready"), condition(DependentPending, "pending"), condition(DependentFailed, "failed")), ReasonPending, condition(DependentReady, "failed"), 3, true},
-		{"status should be ready if all dependents become ready", status(condition(DependentPending, "pending"), condition(DependentReady, "ready"), condition(DependentReady, "ready2")), ReasonReady, condition(DependentReady, "pending"), 3, true},
-		{"status should be ready only if all dependents become ready", status(condition(DependentPending, "pending"), condition(DependentReady, "ready"), condition(DependentPending, "pending2")), ReasonPending, condition(DependentReady, "pending"), 3, true},
+		{
+			testName: "setting nil shouldn't do anything",
+			status:   status(),
+		},
+		{
+			testName:       "properly add condition",
+			status:         status(),
+			expectedReason: ReasonReady,
+			condition:      condition(DependentReady),
+			conditionNb:    1,
+			changed:        true,
+		},
+		{
+			testName:       "updating a condition to ready when it was pending before should result in ready status",
+			status:         status(condition(DependentPending)),
+			expectedReason: ReasonReady,
+			condition:      condition(DependentReady),
+			conditionNb:    1,
+			changed:        true,
+		},
+		{
+			testName:       "failed condition should result in failed status",
+			status:         status(condition(DependentReady, "ready"), condition(DependentPending, "pending"), condition(DependentReady, "failed")),
+			expectedReason: ReasonFailed,
+			condition:      condition(DependentFailed, "failed"),
+			conditionNb:    3,
+			changed:        true,
+		},
+		{
+			testName:       "not ready condition should result in not ready status",
+			status:         status(condition(DependentReady, "ready"), condition(DependentPending, "pending"), condition(DependentFailed, "failed")),
+			expectedReason: ReasonPending,
+			condition:      condition(DependentReady, "failed"),
+			conditionNb:    3,
+			changed:        true,
+		},
+		{
+			testName:       "status should be ready if all dependents become ready",
+			status:         status(condition(DependentPending, "pending"), condition(DependentReady, "ready"), condition(DependentReady, "ready2")),
+			expectedReason: ReasonReady,
+			condition:      condition(DependentReady, "pending"),
+			conditionNb:    3,
+			changed:        true,
+		},
+		{
+			testName:       "status should be ready only if all dependents become ready",
+			status:         status(condition(DependentPending, "pending"), condition(DependentReady, "ready"), condition(DependentPending, "pending2")),
+			expectedReason: ReasonPending,
+			condition:      condition(DependentReady, "pending"),
+			conditionNb:    3,
+			changed:        true,
+		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.testName, func(t *testing.T) {
 			changed := tt.status.SetCondition(tt.condition)
+			if changed && tt.status.Message == initialStatusMessage {
+				t.Errorf("status has changed so its message should have been updated but hasn't")
+			}
 			if changed != tt.changed {
 				t.Errorf("expected changed status to be %t, got %t", tt.changed, changed)
 			}
