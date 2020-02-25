@@ -199,6 +199,7 @@ func (in *DependentCondition) IsFailed() bool {
 type StatusAware interface {
 	GetStatus() Status
 	SetStatus(status Status)
+	Handle(err error) (bool, Status)
 }
 
 func (in *DependentCondition) DeepCopyInto(out *DependentCondition) {
