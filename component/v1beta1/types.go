@@ -88,27 +88,6 @@ type CapabilitiesConfig struct {
 	Provides []CapabilityConfig         `json:"provides,omitempty"`
 }
 
-const (
-	// ComponentPending means the component has been accepted by the system, but it is still being processed. This includes time
-	// before being bound to a node, as well as time spent pulling images onto the host, building and wiring capabilities.
-	ComponentPending = "Pending"
-	// ComponentReady means the component is ready to accept code pushes
-	ComponentReady = "Ready"
-	// ComponentRunning means the component has been bound to a node and all of its dependencies are available. The component is
-	// able to process requests.
-	ComponentRunning = "Running"
-	// ComponentFailed means that the component and its dependencies have terminated, and at least one container has
-	// terminated in a failure (exited with a non-zero exit code or was stopped by the system).
-	ComponentFailed = "Failed"
-	// ComponentUnknown means that for some reason the state of the component could not be obtained, typically due
-	// to an error in communicating with the host of the component.
-	ComponentUnknown = "Unknown"
-	// ComponentBuilding means that the Build mode has been configured and that a build task is running
-	ComponentBuilding = "Building"
-	// ComponentLinking means that the component is attempting to link to another component or capability
-	ComponentLinking = "Linking"
-)
-
 // ComponentStatus defines the observed state of Component
 // +k8s:openapi-gen=true
 type ComponentStatus struct {

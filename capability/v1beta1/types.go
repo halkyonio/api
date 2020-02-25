@@ -62,18 +62,6 @@ const (
 	LoggingCategory CapabilityCategory = "Logging"
 )
 
-const (
-	// CapabilityPending means the capability has been accepted by the system, but it is still being processed. This includes time
-	// being instantiated.
-	CapabilityPending = "Pending"
-	// CapabilityReady means the capability has been instantiated to a node and all of its dependencies are available. The
-	// capability is able to process requests.
-	CapabilityReady = "Ready"
-	// CapabilityFailed means that the capability and its dependencies have terminated, and at least one container has
-	// terminated in a failure (exited with a non-zero exit code or was stopped by the system).
-	CapabilityFailed = "Failed"
-)
-
 // CapabilityStatus defines the observed state of Capability
 // +k8s:openapi-gen=true
 type CapabilityStatus struct {
