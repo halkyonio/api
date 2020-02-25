@@ -88,6 +88,13 @@ type CapabilitiesConfig struct {
 	Provides []CapabilityConfig         `json:"provides,omitempty"`
 }
 
+const (
+	// PushReady means that component is ready to accept pushed code but might not be ready to accept requests yet
+	PushReady = "PushReady"
+	// Building means that the Build mode has been configured and that a build task is running
+	Building = "Building"
+)
+
 // ComponentStatus defines the observed state of Component
 // +k8s:openapi-gen=true
 type ComponentStatus struct {
@@ -108,6 +115,14 @@ func (in ComponentStatus) GetAssociatedPodName() string {
 		return ""
 	}
 	return podCondition[0].GetAttribute(PodNameAttributeKey)
+}
+
+func (in ComponentStatus) IsPushReady() bool {
+	podCondition := in.GetConditionsWith(PodGVK)
+	if len(podCondition) != 1 {
+		return false
+	}
+	return podCondition[0].IsReady()
 }
 
 type Storage struct {
