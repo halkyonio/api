@@ -34,6 +34,16 @@ type CapabilitySpec struct {
 	Parameters []v1beta1.NameValuePair `json:"parameters,omitempty"`
 }
 
+func (in CapabilitySpec) Matches(requested CapabilitySpec) bool {
+	// first check that category and type match
+	if requested.Category.Equals(in.Category) && requested.Type.Equals(in.Type) {
+		// if we're asking for a specific version then we need to provide a capability with that version
+		// todo: implement range matching on version?
+		return len(requested.Version) == 0 || requested.Version == in.Version
+	}
+	return false
+}
+
 type CapabilityCategory string
 
 func (cc CapabilityCategory) String() string {
