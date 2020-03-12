@@ -1,6 +1,7 @@
 package v1beta1
 
 import (
+	"fmt"
 	"halkyon.io/api/capability/v1beta1"
 	common "halkyon.io/api/v1beta1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -71,6 +72,55 @@ type ComponentSpec struct {
 	// Build configuration used to execute a TekTon Build task
 	BuildConfig  BuildConfig        `json:"buildConfig,omitempty"`
 	Capabilities CapabilitiesConfig `json:"capabilities,omitempty"`
+}
+
+const (
+	// CapabilityParameterNamePrefix is a string prefixed to all capability parameters needed to pass information to capability
+	// implementations
+	CapabilityParameterNamePrefix = "halkyon."
+	// TargetComponentDefaultParameterName is the parameter name of the parameter recording which component is requesting the
+	// capability
+	TargetComponentDefaultParameterName = CapabilityParameterNamePrefix + "target.component"
+	// TargetDeploymentDefaultParameterName is the parameter name of the parameter recording the name of the deployment
+	// associated to the component requesting the capability
+	TargetDeploymentDefaultParameterName = CapabilityParameterNamePrefix + "target.deployment"
+	// TargetPortDefaultParameterName is the parameter name of the parameter recording the port of the service associated to
+	// the component requesting the capability
+	TargetPortDefaultParameterName = CapabilityParameterNamePrefix + "target.port"
+)
+
+// AddDefaultCapabilityParameters adds default parameters to the specified capability based on the information provided by the
+// specified component, returning whether the capability was updated as a result. Default parameter names use constants ending
+// with `DefaultParameterName`.
+func AddDefaultCapabilityParameters(toCapability *v1beta1.Capability, fromComponent *Component) bool {
+	updated := AddCapabilityParameterIfNeeded(common.NameValuePair{Name: TargetComponentDefaultParameterName, Value: fromComponent.GetName()}, toCapability)
+	updated = updated || AddCapabilityParameterIfNeeded(common.NameValuePair{Name: TargetDeploymentDefaultParameterName, Value: fromComponent.DeploymentName()}, toCapability)
+	updated = updated || AddCapabilityParameterIfNeeded(common.NameValuePair{Name: TargetPortDefaultParameterName, Value: fmt.Sprintf("%d", fromComponent.Spec.Port)}, toCapability)
+	return updated
+}
+
+// AddCapabilityParameterIfNeeded adds the specified parameter to the specified capability, returning whether the capability was
+// updated as a result
+func AddCapabilityParameterIfNeeded(parameter common.NameValuePair, toCapability *v1beta1.Capability) (updated bool) {
+	value := parameter.Value
+	// try to see if that parameter was already set for that capability
+	found := false
+	for i, pair := range toCapability.Spec.Parameters {
+		if pair.Name == parameter.Name {
+			if pair.Value != value {
+				updated = true
+				toCapability.Spec.Parameters[i] = common.NameValuePair{Name: parameter.Name, Value: value}
+			}
+			found = true
+			break
+		}
+	}
+	// if we didn't find the parameter, add it
+	if !found {
+		updated = true
+		toCapability.Spec.Parameters = append(toCapability.Spec.Parameters, common.NameValuePair{Name: parameter.Name, Value: value})
+	}
+	return updated
 }
 
 type CapabilityConfig struct {
