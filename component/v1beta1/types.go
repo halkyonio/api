@@ -148,6 +148,18 @@ func (in *Component) GetGroupVersionKind() schema.GroupVersionKind {
 	return SchemeGroupVersion.WithKind(Kind)
 }
 
+func (in *Component) DeploymentName() string {
+	return in.DeploymentNameFor(in.Spec.DeploymentMode)
+}
+
+func (in *Component) DeploymentNameFor(mode DeploymentMode) string {
+	name := in.Name
+	if BuildDeploymentMode == mode {
+		return name + "-build"
+	}
+	return name
+}
+
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 
 // ComponentList contains a list of Component
