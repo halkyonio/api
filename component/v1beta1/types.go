@@ -92,10 +92,10 @@ const (
 // AddDefaultCapabilityParameters adds default parameters to the specified capability based on the information provided by the
 // specified component, returning whether the capability was updated as a result. Default parameter names use constants ending
 // with `DefaultParameterName`.
-func AddDefaultCapabilityParameters(toCapability *v1beta1.Capability, fromComponent *Component) bool {
-	updated := AddCapabilityParameterIfNeeded(common.NameValuePair{Name: TargetComponentDefaultParameterName, Value: fromComponent.GetName()}, toCapability)
-	updated = updated || AddCapabilityParameterIfNeeded(common.NameValuePair{Name: TargetDeploymentDefaultParameterName, Value: fromComponent.DeploymentName()}, toCapability)
-	updated = updated || AddCapabilityParameterIfNeeded(common.NameValuePair{Name: TargetPortDefaultParameterName, Value: fmt.Sprintf("%d", fromComponent.Spec.Port)}, toCapability)
+func AddDefaultCapabilityParameters(toCapability *v1beta1.Capability, fromComponent *Component) (updated bool) {
+	updated = AddCapabilityParameterIfNeeded(common.NameValuePair{Name: TargetComponentDefaultParameterName, Value: fromComponent.GetName()}, toCapability) || updated
+	updated = AddCapabilityParameterIfNeeded(common.NameValuePair{Name: TargetDeploymentDefaultParameterName, Value: fromComponent.DeploymentName()}, toCapability) || updated
+	updated = AddCapabilityParameterIfNeeded(common.NameValuePair{Name: TargetPortDefaultParameterName, Value: fmt.Sprintf("%d", fromComponent.Spec.Port)}, toCapability) || updated
 	return updated
 }
 
