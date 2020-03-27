@@ -38,15 +38,15 @@ const (
 	DependentFailed DependentConditionType = "Failed"
 )
 
-// DependentCondition contains details for the current condition of .
+// DependentCondition contains details for the current condition of the associated DependentResource.
 type DependentCondition struct {
-	// Type is the type of the condition.
+	// Type of the condition.
 	Type DependentConditionType `json:"type"`
 	// Type of the dependent associated with the condition.
 	DependentType schema.GroupVersionKind `json:"dependentType"`
 	// Name of the dependent associated with the condition.
 	DependentName string `json:"dependentName"`
-	// Last time the condition transitioned from one status to another.
+	// Records the last time the condition transitioned from one status to another.
 	// +optional
 	LastTransitionTime v1.Time `json:"lastTransitionTime,omitempty"`
 	// Unique, one-word, CamelCase reason for the condition's last transition.
