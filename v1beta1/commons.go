@@ -127,7 +127,7 @@ func (in *Status) SetCondition(condition *DependentCondition) (updated bool) {
 
 	// if, for some reason, the index is not set on the condition, retrieve the condition again from the array as this sets the index
 	index, previous := in.indexAndConditionWith(condition.DependentName, condition.DependentType)
-	if condition.Type != previous.Type || condition.Message != previous.Message {
+	if previous == nil || condition.Type != previous.Type || condition.Message != previous.Message {
 		condition.Reason = string(condition.Type)
 		now := v1.NewTime(time.Now())
 		condition.LastTransitionTime = now
@@ -136,30 +136,32 @@ func (in *Status) SetCondition(condition *DependentCondition) (updated bool) {
 		updated = true
 	}
 
-	// re-compute overall status
-	overall := ReasonReady
-	conditionMessages := make([]string, 0, len(in.Conditions))
-	for _, c := range in.Conditions {
-		// if the condition isn't ready, then the overall status should be pending
-		if !c.IsReady() {
-			if len(c.Message) > 0 {
-				conditionMessages = append(conditionMessages, c.Message)
+	// re-compute overall status only if the set condition has changed or if we don't already have an overall status
+	if updated || len(in.Reason) == 0 {
+		overall := ReasonReady
+		conditionMessages := make([]string, 0, len(in.Conditions))
+		for _, c := range in.Conditions {
+			// if the condition isn't ready, then the overall status should be pending
+			if !c.IsReady() {
+				if len(c.Message) > 0 {
+					conditionMessages = append(conditionMessages, c.Message)
+				}
+				overall = ReasonPending
 			}
-			overall = ReasonPending
+			// if the condition is failed, then the overall status should be failed
+			if c.IsFailed() {
+				overall = ReasonFailed
+			}
 		}
-		// if the condition is failed, then the overall status should be failed
-		if c.IsFailed() {
-			overall = ReasonFailed
+		if in.Reason != overall {
+			in.Reason = overall
+			updated = true
 		}
-	}
-	if in.Reason != overall {
-		in.Reason = overall
-		updated = true
-	}
-	msg := strings.Join(conditionMessages, ", ")
-	if in.Message != msg {
-		in.Message = msg
-		updated = true
+		msg := strings.Join(conditionMessages, ", ")
+		if in.Message != msg {
+			in.Message = msg
+			updated = true
+		}
 	}
 
 	return

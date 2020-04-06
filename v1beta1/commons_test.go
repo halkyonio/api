@@ -8,6 +8,10 @@ import (
 const initialStatusMessage = "Initial"
 
 func status(conditions ...*DependentCondition) Status {
+	return statusWithInitialReason("", conditions...)
+}
+
+func statusWithInitialReason(reason string, conditions ...*DependentCondition) Status {
 	status := Status{}
 	dc := make([]DependentCondition, 0, len(conditions))
 	for _, condition := range conditions {
@@ -15,6 +19,9 @@ func status(conditions ...*DependentCondition) Status {
 	}
 	status.Conditions = dc
 	status.Message = initialStatusMessage
+	if len(reason) > 0 {
+		status.Reason = reason
+	}
 	return status
 }
 
@@ -90,6 +97,14 @@ func TestSetCondition(t *testing.T) {
 			condition:      condition(DependentReady, "pending"),
 			conditionNb:    3,
 			changed:        true,
+		},
+		{
+			testName:       "status should not change when setting unchanged condition",
+			status:         statusWithInitialReason(ReasonPending, condition(DependentPending, "pending"), condition(DependentReady, "ready")),
+			expectedReason: ReasonPending,
+			condition:      condition(DependentPending, "pending"),
+			conditionNb:    2,
+			changed:        false,
 		},
 	}
 
